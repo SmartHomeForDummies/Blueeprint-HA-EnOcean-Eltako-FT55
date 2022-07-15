@@ -1,0 +1,121 @@
+blueprint:
+  name: Eltako FT55 Button
+  description: >
+    EnOcean FT55 Button - Events Push and Release - 8 Actions
+  domain: automation
+  input:
+    remote:
+      name: Button ID
+      description: >
+        FT55 button ID decimal
+            - 254
+            - 254
+            - 254
+            - 254
+        or hexadezimal
+          [0xfe, 0xfe, 0xfe, 0xfe]
+      default: [0xfe, 0xfe, 0xfe, 0xfe]
+      selector:
+        object:
+    button_top_left_push:
+      name: Button 1 - Push
+      description: Action Button 1 push (top left)
+      default: []
+      selector:
+        action: {}
+    button_top_left_release:
+      name: Button 1 - Release
+      description: Action Button 1 release (top left)
+      default: []
+      selector:
+        action: {}
+    button_down_left_push:
+      name: Button 2 - Push
+      description: Action Button 2 push (down left)
+      default: []
+      selector:
+        action: {}
+    button_down_left_release:
+      name: Button 2 - Release
+      description: Action Button 2 release (down left)
+      default: []
+      selector:
+        action: {}
+    button_top_right_push:
+      name: Button 3 - Push
+      description: Action Button 3 push (top right)
+      default: []
+      selector:
+        action: {}
+    button_top_right_release:
+      name: Button 3 - Release
+      description: Action Button 3 release (top right)
+      default: []
+      selector:
+        action: {}
+    button_down_right_push:
+      name: Button 4 - push
+      description: Action Button 4 push (down right)
+      default: []
+      selector:
+        action: {}
+    button_down_right_release:
+      name: Button 4 - Release
+      description: Action Button 4 release (down right)
+      default: []
+      selector:
+        action: {}
+mode: restart
+max_exceeded: silent
+
+trigger:
+- platform: event
+  event_type: button_pressed
+  event_data:
+    id: !input 'remote'
+action:
+- variables:
+    onoff: '{{ trigger.event.data.onoff }}'
+    which: '{{ trigger.event.data.which }}'
+    pushed: '{{ trigger.event.data.pushed }}'
+- choose:
+  - conditions:
+    - '{{ onoff == 0 }}'
+    - '{{ which == 1 }}'
+    - '{{ pushed == 1 }}'
+    sequence: !input 'button_top_left_push'
+  - conditions:
+    - '{{ onoff == 0 }}'
+    - '{{ which == 1 }}'
+    - '{{ pushed == 0 }}'
+    sequence: !input 'button_top_left_release'
+  - conditions:
+    - '{{ onoff == 1 }}'
+    - '{{ which == 1 }}'
+    - '{{ pushed == 1 }}'
+    sequence: !input 'button_down_left_push'
+  - conditions:
+    - '{{ onoff == 1 }}'
+    - '{{ which == 1 }}'
+    - '{{ pushed == 0 }}'
+    sequence: !input 'button_down_left_release'
+  - conditions:
+    - '{{ onoff == 0 }}'
+    - '{{ which == 0 }}'
+    - '{{ pushed == 1 }}'
+    sequence: !input 'button_top_right_push'
+  - conditions:
+    - '{{ onoff == 0 }}'
+    - '{{ which == 0 }}'
+    - '{{ pushed == 0 }}'
+    sequence: !input 'button_top_right_release'
+  - conditions:
+    - '{{ onoff == 1 }}'
+    - '{{ which == 0 }}'
+    - '{{ pushed == 1 }}'
+    sequence: !input 'button_down_right_push'
+  - conditions:
+    - '{{ onoff == 1 }}'
+    - '{{ which == 0 }}'
+    - '{{ pushed == 0 }}'
+    sequence: !input 'button_down_right_release'

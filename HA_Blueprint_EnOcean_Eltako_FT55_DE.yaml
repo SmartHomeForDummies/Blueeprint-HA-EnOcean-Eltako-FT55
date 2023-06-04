@@ -1,0 +1,122 @@
+blueprint:
+  name: Eltako FT55 Schalter
+  description: >
+    EnOcean FT55 Schalter - Events Drücken and Loslassen - 8 Aktionen
+  domain: automation
+  author: SmartHome for Dummies
+  input:
+    remote:
+      name: Schalter ID
+      description: >
+        FT55 Schalter ID dezimal
+            - 254
+            - 254
+            - 254
+            - 254
+        oder hexadezimal
+          [0xfe, 0xfe, 0xfe, 0xfe]
+      default: [0xfe, 0xfe, 0xfe, 0xfe]
+      selector:
+        object:
+    button_top_left_push:
+      name: Tase 1 - Drücken
+      description: Aktion Taste 1 drücken (links oben)
+      default: []
+      selector:
+        action: {}
+    button_top_left_release:
+      name: Tase 1 - Loslassen
+      description: Aktion Taste 1 loslasseen (links oben)
+      default: []
+      selector:
+        action: {}
+    button_down_left_push:
+      name: Taste 2 - Drücken
+      description: Aktion Taste 2 drücken (links unten)
+      default: []
+      selector:
+        action: {}
+    button_down_left_release:
+      name: Taste 2 - Loslasseen
+      description: Aktion Taste 2 loslasseen (links unten)
+      default: []
+      selector:
+        action: {}
+    button_top_right_push:
+      name: Taste 3 - Drücken
+      description: Aktion Taste 3 drücken (rechts obeen)
+      default: []
+      selector:
+        action: {}
+    button_top_right_release:
+      name: Taste 3 - Loslasseen
+      description: Aktion Taste 3 loslasseen (rechts oben)
+      default: []
+      selector:
+        action: {}
+    button_down_right_push:
+      name: Taste 4 - Drücken
+      description: Aktion Taste 4 drücken (rechts unten)
+      default: []
+      selector:
+        action: {}
+    button_down_right_release:
+      name: Taste 4 - Loslassen
+      description: Aktion Taste 4 loslasseen (rechts unten)
+      default: []
+      selector:
+        action: {}
+mode: restart
+max_exceeded: silent
+
+trigger:
+- platform: event
+  event_type: button_pressed
+  event_data:
+    id: !input 'remote'
+action:
+- variables:
+    onoff: '{{ trigger.event.data.onoff }}'
+    which: '{{ trigger.event.data.which }}'
+    pushed: '{{ trigger.event.data.pushed }}'
+- choose:
+  - conditions:
+    - '{{ onoff == 0 }}'
+    - '{{ which == 1 }}'
+    - '{{ pushed == 1 }}'
+    sequence: !input 'button_top_left_push'
+  - conditions:
+    - '{{ onoff == 0 }}'
+    - '{{ which == 1 }}'
+    - '{{ pushed == 0 }}'
+    sequence: !input 'button_top_left_release'
+  - conditions:
+    - '{{ onoff == 1 }}'
+    - '{{ which == 1 }}'
+    - '{{ pushed == 1 }}'
+    sequence: !input 'button_down_left_push'
+  - conditions:
+    - '{{ onoff == 1 }}'
+    - '{{ which == 1 }}'
+    - '{{ pushed == 0 }}'
+    sequence: !input 'button_down_left_release'
+  - conditions:
+    - '{{ onoff == 0 }}'
+    - '{{ which == 0 }}'
+    - '{{ pushed == 1 }}'
+    sequence: !input 'button_top_right_push'
+  - conditions:
+    - '{{ onoff == 0 }}'
+    - '{{ which == 0 }}'
+    - '{{ pushed == 0 }}'
+    sequence: !input 'button_top_right_release'
+  - conditions:
+    - '{{ onoff == 1 }}'
+    - '{{ which == 0 }}'
+    - '{{ pushed == 1 }}'
+    sequence: !input 'button_down_right_push'
+  - conditions:
+    - '{{ onoff == 1 }}'
+    - '{{ which == 0 }}'
+    - '{{ pushed == 0 }}'
+    sequence: !input 'button_down_right_release'
